@@ -8,6 +8,8 @@
 #ifndef FMT_WCHAR_H_
 #define FMT_WCHAR_H_
 
+#include <cwchar>
+
 #include "format.h"
 
 namespace fmt {
@@ -24,6 +26,18 @@ template <typename... Args>
 constexpr format_arg_store<wformat_context, Args...> make_wformat_args(
     const Args&... args) {
   return {args...};
+}
+
+inline void vprint(std::FILE* f, wstring_view format_str, wformat_args args) {
+  wmemory_buffer buffer;
+  detail::vformat_to(buffer, format_str, args);
+  buffer.push_back(L'\0');
+  if (std::fputws(buffer.data(), f) == -1)
+    FMT_THROW(system_error(errno, "cannot write to file"));
+}
+
+inline void vprint(basic_string_view<Char> format_str, wformat_args args) {
+  vprint(stdout, format_str, args);
 }
 
 template <typename... T>
