@@ -169,13 +169,13 @@ struct scan_handler : error_handler {
     scan_ctx_.advance_to(it + size);
   }
 
-  FMT_CONSTEXPR int on_arg_id() { return on_arg_id(next_arg_id_++); }
-  FMT_CONSTEXPR int on_arg_id(int id) {
+  int on_arg_id() { return on_arg_id(next_arg_id_++); }
+  int on_arg_id(int id) {
     if (id >= args_.size) on_error("argument index out of range");
     arg_ = args_.data[id];
     return id;
   }
-  FMT_CONSTEXPR int on_arg_id(string_view id) {
+  int on_arg_id(string_view id) {
     if (id.data()) on_error("invalid format");
     return 0;
   }
