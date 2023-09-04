@@ -1387,7 +1387,12 @@ FMT_CONSTEXPR auto format_uint(Char* buffer, UInt value, int num_digits,
 }
 
 template <unsigned BASE_BITS, typename Char, typename It, typename UInt>
-FMT_CONSTEXPR inline auto format_uint(It out, UInt value, int num_digits,
+// NOTE GCC 6.x does not like constexpr here (particularly when compiled in
+// debug mode.)
+#if !(defined(FMT_GCC_VERSION) && FMT_GCC_VERSION < 700) || defined(__clang__)
+FMT_CONSTEXPR
+#endif
+inline auto format_uint(It out, UInt value, int num_digits,
                                       bool upper = false) -> It {
   if (auto ptr = to_pointer<Char>(out, to_unsigned(num_digits))) {
     format_uint<BASE_BITS>(ptr, value, num_digits, upper);
